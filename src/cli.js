@@ -1,8 +1,16 @@
+import { Readable } from "node:stream";
+import { pipeline } from "node:stream/promises";
+// import { Interface } from "readline/promises";
 import { FMInterface } from "./fm-interface.js";
-import { cd, up } from "./nav.js";
+
+import { cat } from "./files.js";
+import { cd, ls, up } from "./nav.js";
 import { strings } from "./strings.js";
 
-export const cli = new FMInterface(process.stdin, process.stdout);
+export const cli = new FMInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
 
 const commands = {
   ".exit": () => cli.close(),
@@ -13,20 +21,28 @@ const commands = {
   },
   cd,
   up,
+  ls,
+  cat,
 };
 
 cli
-  .on("line", (query) => {
+  .on("line", async (query) => {
     const [cmd, ...args] = query.split(" ");
     try {
       const response =
-        commands[cmd] == undefined ? strings.invalid : commands[cmd]?.(...args);
-      if (response) console.log(response);
+        commands[cmd] == undefined
+          ? strings.invalid
+          : await commands[cmd](...args);
+      if (response instanceof Readable) {
+        await pipeline(response, process.stdout, { end: false });
+      } else if (response) {
+        console.log(response);
+      }
+      cli.prompt();
     } catch (err) {
       console.error(strings.error);
       console.error(err.message);
     }
-    cli.prompt();
   })
   .on("close", () => {
     console.log(strings.goodbye);
