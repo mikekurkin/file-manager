@@ -19,7 +19,8 @@ cli
   .on("line", (query) => {
     const [cmd, ...args] = query.split(" ");
     try {
-      const response = commands[cmd]?.(...args) || strings.invalid;
+      const response =
+        commands[cmd] == undefined ? strings.invalid : commands[cmd]?.(...args);
       if (response) console.log(response);
     } catch (err) {
       console.error(strings.error);
