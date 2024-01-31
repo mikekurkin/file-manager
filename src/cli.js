@@ -1,4 +1,5 @@
 import { FMInterface } from "./fm-interface.js";
+import { cd, up } from "./nav.js";
 import { strings } from "./strings.js";
 
 export const cli = new FMInterface(process.stdin, process.stdout);
@@ -10,6 +11,8 @@ const commands = {
   error: () => {
     throw new Error();
   },
+  cd,
+  up,
 };
 
 cli
