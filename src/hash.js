@@ -6,7 +6,7 @@ import { pipeline } from "node:stream/promises";
 import { UsageError } from "./cli.js";
 
 export const hash = async (...args) => {
-  if (args.length != 1) throw new UsageError("usage: add file");
+  if (args.length != 1) throw new UsageError("usage: hash file");
   const [pathString] = args;
 
   const filePath = resolve(pathString);
