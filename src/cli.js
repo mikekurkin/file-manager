@@ -7,6 +7,7 @@ import { hash } from "./hash.js";
 import { cd, ls, up } from "./nav.js";
 import { os } from "./os.js";
 import { strings } from "./strings.js";
+import { compress, decompress } from "./zlib.js";
 
 export const cli = new FMInterface({
   input: process.stdin,
@@ -31,6 +32,8 @@ const commands = {
   rm,
   os,
   hash,
+  compress,
+  decompress,
 };
 
 cli
