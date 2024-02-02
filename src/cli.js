@@ -2,7 +2,7 @@ import { Readable } from "node:stream";
 import { pipeline } from "node:stream/promises";
 import { FMInterface } from "./fm-interface.js";
 
-import { cat } from "./files.js";
+import { add, cat } from "./files.js";
 import { cd, ls, up } from "./nav.js";
 import { strings } from "./strings.js";
 
@@ -22,6 +22,7 @@ const commands = {
   up,
   ls,
   cat,
+  add,
 };
 
 cli
@@ -38,8 +39,12 @@ cli
         console.log(response);
       }
     } catch (err) {
-      console.error(strings.error);
-      console.error(err.message);
+      if (err.code == "ERR_INVALID_ARG_TYPE") {
+        console.error(strings.invalid);
+      } else {
+        console.error(strings.error);
+        console.error(err.message);
+      }
     }
     cli.prompt();
   })
