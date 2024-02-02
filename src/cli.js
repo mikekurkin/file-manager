@@ -3,6 +3,7 @@ import { pipeline } from "node:stream/promises";
 import { FMInterface } from "./fm-interface.js";
 
 import { add, cat, cp, mv, rm, rn } from "./files.js";
+import { hash } from "./hash.js";
 import { cd, ls, up } from "./nav.js";
 import { os } from "./os.js";
 import { strings } from "./strings.js";
@@ -29,6 +30,7 @@ const commands = {
   mv,
   rm,
   os,
+  hash,
 };
 
 cli
