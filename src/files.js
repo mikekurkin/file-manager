@@ -18,7 +18,7 @@ export const add = async (...args) => {
   const [pathString] = args;
 
   const filePath = resolve(pathString);
-  writeFile(filePath, "", { flag: "w+" });
+  await writeFile(filePath, "", { flag: "w+" });
 };
 
 export const rn = async (...args) => {
@@ -28,7 +28,7 @@ export const rn = async (...args) => {
 
   const srcPath = resolve(srcPathString);
   const dstPath = resolve(dstPathString);
-  rename(srcPath, dstPath);
+  await rename(srcPath, dstPath);
 };
 
 export const cp = async (...args) => {
@@ -42,7 +42,7 @@ export const cp = async (...args) => {
   const srcStream = (await open(srcPath, "r")).createReadStream();
   const dstStream = (await open(dstPath, "wx")).createWriteStream();
 
-  pipeline(srcStream, dstStream);
+  await pipeline(srcStream, dstStream);
 };
 
 export const rm = async (...args) => {
@@ -50,7 +50,7 @@ export const rm = async (...args) => {
   const [pathString] = args;
 
   const filePath = resolve(pathString);
-  fsRm(filePath);
+  await fsRm(filePath);
 };
 
 export const mv = async (...args) => {
@@ -58,5 +58,5 @@ export const mv = async (...args) => {
     throw new UsageError("usage: mv source_file target_file");
   const [srcPathString, dstPathString] = args;
 
-  cp(srcPathString, dstPathString).then(rm(srcPathString));
+  await cp(srcPathString, dstPathString).then(rm(srcPathString));
 };
