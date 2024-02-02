@@ -1,6 +1,5 @@
 import { Readable } from "node:stream";
 import { pipeline } from "node:stream/promises";
-// import { Interface } from "readline/promises";
 import { FMInterface } from "./fm-interface.js";
 
 import { cat } from "./files.js";
@@ -38,11 +37,11 @@ cli
       } else if (response) {
         console.log(response);
       }
-      cli.prompt();
     } catch (err) {
       console.error(strings.error);
       console.error(err.message);
     }
+    cli.prompt();
   })
   .on("close", () => {
     console.log(strings.goodbye);
