@@ -4,6 +4,7 @@ import { FMInterface } from "./fm-interface.js";
 
 import { add, cat, cp, mv, rm, rn } from "./files.js";
 import { cd, ls, up } from "./nav.js";
+import { os } from "./os.js";
 import { strings } from "./strings.js";
 
 export const cli = new FMInterface({
@@ -27,6 +28,7 @@ const commands = {
   cp,
   mv,
   rm,
+  os,
 };
 
 cli
@@ -43,7 +45,9 @@ cli
         console.log(response);
       }
     } catch (err) {
-      if (err.code == "ERR_INVALID_ARG_TYPE") {
+      if (
+        ["ERR_INVALID_ARG_TYPE", "ERR_INVALID_ARG_VALUE"].includes(err.code)
+      ) {
         console.error(strings.invalid);
       } else {
         console.error(strings.error);
