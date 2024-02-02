@@ -2,7 +2,7 @@ import { Readable } from "node:stream";
 import { pipeline } from "node:stream/promises";
 import { FMInterface } from "./fm-interface.js";
 
-import { add, cat } from "./files.js";
+import { add, cat, cp, mv, rm, rn } from "./files.js";
 import { cd, ls, up } from "./nav.js";
 import { strings } from "./strings.js";
 
@@ -23,6 +23,10 @@ const commands = {
   ls,
   cat,
   add,
+  rn,
+  cp,
+  mv,
+  rm,
 };
 
 cli
