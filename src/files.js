@@ -2,24 +2,40 @@ import { rm as fsRm, open, rename, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { pipeline } from "node:stream/promises";
 
-export const cat = async (pathString) => {
+import { UsageError } from "./cli.js";
+
+export const cat = async (...args) => {
+  if (args.length != 1) throw new UsageError("usage: cat file");
+  const [pathString] = args;
+
   const filePath = resolve(pathString);
   const fileStream = (await open(filePath)).createReadStream();
   return fileStream;
 };
 
-export const add = async (pathString) => {
+export const add = async (...args) => {
+  if (args.length != 1) throw new UsageError("usage: add file");
+  const [pathString] = args;
+
   const filePath = resolve(pathString);
   writeFile(filePath, "", { flag: "w+" });
 };
 
-export const rn = async (srcPathString, dstPathString) => {
+export const rn = async (...args) => {
+  if (args.length != 2)
+    throw new UsageError("usage: rn source_file target_file");
+  const [srcPathString, dstPathString] = args;
+
   const srcPath = resolve(srcPathString);
   const dstPath = resolve(dstPathString);
   rename(srcPath, dstPath);
 };
 
-export const cp = async (srcPathString, dstPathString) => {
+export const cp = async (...args) => {
+  if (args.length != 2)
+    throw new UsageError("usage: cp source_file target_file");
+  const [srcPathString, dstPathString] = args;
+
   const srcPath = resolve(srcPathString);
   const dstPath = resolve(dstPathString);
 
@@ -29,11 +45,18 @@ export const cp = async (srcPathString, dstPathString) => {
   pipeline(srcStream, dstStream);
 };
 
-export const rm = async (pathString) => {
+export const rm = async (...args) => {
+  if (args.length != 1) throw new UsageError("usage: rm file");
+  const [pathString] = args;
+
   const filePath = resolve(pathString);
   fsRm(filePath);
 };
 
-export const mv = async (srcPathString, dstPathString) => {
+export const mv = async (...args) => {
+  if (args.length != 2)
+    throw new UsageError("usage: mv source_file target_file");
+  const [srcPathString, dstPathString] = args;
+
   cp(srcPathString, dstPathString).then(rm(srcPathString));
 };

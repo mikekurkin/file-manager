@@ -1,18 +1,28 @@
 import { readdir } from "node:fs/promises";
 import { resolve } from "node:path";
 
-export const up = () => {
+import { UsageError } from "./cli.js";
+
+export const up = (...args) => {
+  if (args.length != 0) throw new UsageError("usage: up");
+
   const destination = resolve(process.cwd(), "..");
   process.chdir(destination);
 };
 
-export const cd = (pathString) => {
+export const cd = (...args) => {
+  if (args.length != 1) throw new UsageError("usage: cd folder");
+  const [pathString] = args;
+
   const destination = resolve(pathString);
   process.chdir(destination);
 };
 
-export const ls = async (pathString = ".") => {
-  const workdirPath = resolve(pathString);
+export const ls = async (...args) => {
+  if (args.length > 1) throw new UsageError("usage: ls [folder]");
+  const [pathString] = args;
+
+  const workdirPath = resolve(pathString || ".");
   const dirents = await readdir(workdirPath, { withFileTypes: true });
 
   const sortedFiles = Object.entries(

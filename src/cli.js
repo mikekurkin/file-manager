@@ -14,54 +14,48 @@ export const cli = new FMInterface({
   output: process.stdout,
 });
 
+export class UsageError extends Error {
+  constructor(message = strings.invalid) {
+    super(message);
+    this.name = "UsageError";
+  }
+}
+
 const commands = {
   ".exit": () => cli.close(),
-  echo: (s) => `echo: ${s}`,
-  help: () => `available commands: ${Object.keys(commands).join(", ")}`,
-  error: () => {
-    throw new Error();
-  },
-  cd,
-  up,
-  ls,
-  cat,
+  ".help": () => `available commands: ${Object.keys(commands).join(", ")}`,
   add,
-  rn,
-  cp,
-  mv,
-  rm,
-  os,
-  hash,
+  cat,
+  cd,
   compress,
+  cp,
   decompress,
+  hash,
+  ls,
+  mv,
+  os,
+  rm,
+  rn,
+  up,
 };
 
-cli
-  .on("line", async (query) => {
-    const [cmd, ...args] = query.split(" ");
-    try {
-      const response =
-        commands[cmd] == undefined
-          ? strings.invalid
-          : await commands[cmd](...args);
-      if (response instanceof Readable) {
-        await pipeline(response, process.stdout, { end: false });
-      } else if (response) {
-        console.log(response);
-      }
-    } catch (err) {
-      if (
-        ["ERR_INVALID_ARG_TYPE", "ERR_INVALID_ARG_VALUE"].includes(err.code)
-      ) {
-        console.error(strings.invalid);
-      } else {
-        console.error(strings.error);
-        console.error(err.message);
-      }
+cli.on("line", async (query) => {
+  const [cmd, ...args] = query.split(" ");
+  try {
+    if (commands[cmd] == undefined) throw new UsageError(commands[".help"]());
+    const response = await commands[cmd](...args);
+    if (response instanceof Readable) {
+      await pipeline(response, process.stdout, { end: false });
+    } else if (response) {
+      console.log(response);
     }
-    cli.prompt();
-  })
-  .on("close", () => {
-    console.log(strings.goodbye);
-    process.exit(0);
-  });
+  } catch (err) {
+    if (err instanceof UsageError) {
+      console.error(strings.invalid);
+    } else {
+      console.error(strings.error);
+    }
+    console.error(err.message);
+  }
+  cli.prompt();
+});

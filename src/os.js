@@ -1,4 +1,5 @@
 import { EOL, arch, cpus, userInfo } from "node:os";
+import { UsageError } from "./cli.js";
 
 export const os = (arg) => {
   switch (arg) {
@@ -17,8 +18,8 @@ export const os = (arg) => {
     case "--architecture":
       return arch();
     default:
-      const argumentError = new TypeError("Invalid argument");
-      argumentError.code = "ERR_INVALID_ARG_VALUE";
-      throw argumentError;
+      throw new UsageError(
+        "usage: os [--EOL | --cpus | --homedir | --username | --architecture ]"
+      );
   }
 };

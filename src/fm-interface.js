@@ -11,4 +11,9 @@ export class FMInterface extends Interface {
     console.log(strings.workdir);
     super.prompt(...args);
   }
+  close(...args) {
+    super.close(...args);
+    console.log(strings.goodbye);
+    process.exit(0);
+  }
 }
